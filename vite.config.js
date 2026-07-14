@@ -113,8 +113,10 @@ export default defineConfig(({ mode }) => {
   return {
     base: env.VITE_APP_BASE_PATH, // Use the base path from environment variable
     plugins: [react(), tailwindcss(), VitePWA(pwaOptions)],
+    // Avoid exposing the entire `process.env` object which can leak secrets.
+    // Only expose the specific env vars the app needs at build time.
     define: {
-      "process.env": env,
+      "process.env.VITE_APP_BASE_PATH": JSON.stringify(env.VITE_APP_BASE_PATH || "/"),
     },
     optimizeDeps: {
       exclude: ["@undecaf/barcode-detector-polyfill", "@undecaf/zbar-wasm"],
